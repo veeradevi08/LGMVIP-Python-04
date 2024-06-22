@@ -1,0 +1,57 @@
+import pyttsx3
+import speech_recognition as sr
+
+# Initialize speech recognition
+recognizer = sr.Recognizer()
+
+# Initialize text-to-speech engine
+engine = pyttsx3.init()
+
+# Function to capture audio input and convert to text
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        recognizer.adjust_for_ambient_noise(source, duration=1)
+        audio = recognizer.listen(source)
+
+    try:
+        query = recognizer.recognize_google(audio, language='en')
+        print(f"User said: {query}")
+        return query.lower()
+    except sr.UnknownValueError:
+        print("Sorry, I didn't get that. Please try again.")
+        return ""
+    except sr.RequestError:
+        print("Sorry, I couldn't request results. Please check your internet connection.")
+        return ""
+
+# Function to speak text
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+# Function to greet the user
+def greet():
+    speak("Hello! How can I assist you today?")
+
+# Function to handle user commands
+def process_command(query):
+    if 'hello' in query:
+        greet()
+    elif 'time' in query:
+        speak("Sorry, I can't tell the time right now. Implement this feature.")
+    elif 'search' in query:
+        speak("Sorry, I can't perform searches right now. Implement this feature.")
+    else:
+        speak("I'm sorry, I don't understand that command.")
+
+# Main function to run the assistant
+def main():
+    greet()
+    while True:
+        query = listen()
+        if query:
+            process_command(query)
+
+if __name__ == "__main__":
+    main()
